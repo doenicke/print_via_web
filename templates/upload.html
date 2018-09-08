@@ -1,10 +1,15 @@
 <!doctype html>
-<title>Upload new File</title>
-<h1>Upload new File</h1>
-<form action = "http://localhost:5000/uploader" method = "POST" 
-     enctype = "multipart/form-data">
-     <input type = "file" name = "file" />
-     <input type = "submit"/>
-</form>
-      
+<html>
+<head>
+    <title>Datei hochladen</title>
+</head>
 
+<body>
+    <h2>Datei hochladen</h2>
+    <form action = "http://localhost:5000/uploader" method = "POST"
+        enctype = "multipart/form-data">
+        <input type = "file" name = "file" />
+        <br /><br /><br />
+        <input type = "submit"/>
+    </form>
+</body>
