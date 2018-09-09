@@ -1,0 +1,19 @@
+<!doctype html>
+<html>
+<head>
+    {% if title %}
+    <title>{{ title }}</title>
+    {% else %}
+    <title>Druckdateien verwalten</title>
+    {% endif %}
+</head>
+<body>
+    <div>
+    Druckdateien verwalten: 
+    <a href="/index">Start</a> |
+    <a href="/list">Liste</a>
+    </div>
+    <hr />
+    {% block content %}{% endblock %}
+</body>
+

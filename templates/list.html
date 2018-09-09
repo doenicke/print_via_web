@@ -1,10 +1,13 @@
-<!doctype html>
-<html>
-<head>
-    <title>Dateien anzeigen</title>
-</head>
+{% extends "base.html" %}
 
-<body>
-    <h2>Liste aller Dateien:</h2>
-    {% for i in flist
-</body>
+{% block content %}
+    <h2>Alle Dateien</h2>
+    <div>
+    {% for file in files %}
+    <hr />{{ file }}<br />
+    [<a href="/exec/print/{{ file }}">Drucken</a>]
+    [<a href="/exec/delete/{{ file }}">Löschen</a>]
+    {% endfor %}
+    <hr />
+    </div>
+{% endblock %}

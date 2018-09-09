@@ -7,9 +7,11 @@ from werkzeug.utils import secure_filename
 
 UPLOAD_FOLDER = '/home/johannes/Dokumente/Entwicklung/python/http-upload/uploads'
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
+SERVER_PORT=5001
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['SERVER_PORT'] = SERVER_PORT
 
 
 def allowed_file(filename):
@@ -25,7 +27,7 @@ def allowed_file(filename):
 # def hello(name = None):
 #    return render_template('hello.html')
 
-
+@app.route('/index')
 @app.route('/')
 def upload_file():
     return render_template('upload.html')
@@ -34,13 +36,17 @@ def upload_file():
 @app.route('/uploader', methods=['POST'])
 def uploader():
     f = request.files['file']
-    myfilename = os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(f.filename))
-    f.save(myfilename)
-    return 'Datei wurde hochgeladen: '+myfilename
+    f.save(os.path.join(app.config['UPLOAD_FOLDER'], 
+           secure_filename(f.filename) ))
+    return render_template('upload-finished.html', 
+            filename=secure_filename(f.filename) )
 
 
 @app.route('/list', methods=['GET'])
-    return render_template('list.html')
+def list_files():
+    files = []
+    return render_template('list.html', 
+        files=os.listdir(app.config['UPLOAD_FOLDER']) )
 
 
 # @app.route('/', methods=['GET', 'POST'])
@@ -79,4 +85,5 @@ def uploader():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port=app.config['SERVER_PORT'])
+
