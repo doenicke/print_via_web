@@ -1,5 +1,11 @@
 # http-upload
 
+Mini Web-Server zum Hochladen von Dateien, um diese dann
+an den Standarddrucker (via lp/CUPS) zu schicken. 
+
+Hintergrund: Fehlende Druckfunktion von Smartphones und Tablets
+
+
 ## Installation
 
     git clone ...
