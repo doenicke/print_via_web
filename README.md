@@ -7,7 +7,7 @@
     mkdir uploads
     
     
-### .service Datei anlegen
+### .service Datei
 
 Als erstes muss eine `.service`-Datei unter `/etc/systemd/system` angelegt werden, 
 z.B. mit dem Dateinamen `http-upload.service`. 
