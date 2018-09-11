@@ -12,7 +12,7 @@ from subprocess import call, check_output
 reload(sys)  
 sys.setdefaultencoding('utf8')
 
-UPLOAD_FOLDER = '/home/johannes/Dokumente/Entwicklung/python/http-upload/uploads'
+UPLOAD_FOLDER = './uploads'
 ALLOWED_EXTENSIONS = set(['txt', 'pdf'])
 SERVER_PORT=5001
 
