@@ -1,13 +1,12 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h2>Alle Dateien</h2>
-    <div>
+    <h2>Liste aller Dateien</h2>
+
     {% for file in files %}
-    <hr />{{ file }}<br />
-    [<a href="/exec/print/{{ file }}">Drucken</a>]
-    [<a href="/exec/delete/{{ file }}">Löschen</a>]
+    <p>{{ file }}<br />
+    <a href="/print/{{ file }}" class="btn">Drucken</a>
+    <a href="/show/{{ file }}" class="btn">Anzeigen</a>
+    <a href="/delete/{{ file }}" class="btn">Löschen</a></p>
     {% endfor %}
-    <hr />
-    </div>
 {% endblock %}

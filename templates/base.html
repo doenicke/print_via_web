@@ -1,19 +1,55 @@
 <!doctype html>
 <html>
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     {% if title %}
     <title>{{ title }}</title>
     {% else %}
     <title>Druckdateien verwalten</title>
     {% endif %}
+    
+    <style>
+    .flashes {
+      background-color: gray;
+      color: white;
+      padding: 10px;
+    } 
+    
+    a.btn:link, a.btn:visited {
+        background-color: darkblue;
+        color: white;
+        padding: 10px 15px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    a.btn:hover, a.btn:active {
+        background-color: blue;
+    }
+
+    </style>
+    
 </head>
 <body>
-    <div>
-    Druckdateien verwalten: 
-    <a href="/index">Start</a> |
-    <a href="/list">Liste</a>
-    </div>
+    <p>
+    <a href="/upload" class="btn">Hochladen</a>
+    <a href="/list" class="btn">Liste</a> 
+    <a href="/info" class="btn">Druckerinfo</a>
+    </p>
     <hr />
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul class=flashes>
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+
     {% block content %}{% endblock %}
 </body>
 

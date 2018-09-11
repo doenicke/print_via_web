@@ -1,15 +1,24 @@
 #!/usr/bin/env python
+# coding: utf-8
 
-import os
+# flashing: http://flask.pocoo.org/docs/0.12/patterns/flashing/
+
+import os, sys
 from flask import Flask, flash, request, redirect, url_for, send_from_directory
 from flask import render_template
 from werkzeug.utils import secure_filename
+from subprocess import call, check_output
+
+reload(sys)  
+sys.setdefaultencoding('utf8')
 
 UPLOAD_FOLDER = '/home/johannes/Dokumente/Entwicklung/python/http-upload/uploads'
-ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
+ALLOWED_EXTENSIONS = set(['txt', 'pdf'])
 SERVER_PORT=5001
 
 app = Flask(__name__)
+app.secret_key = b'*l/fjsd%9feFJ23§$8wr9sjf09'
+app.testing = True
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['SERVER_PORT'] = SERVER_PORT
 
@@ -19,27 +28,88 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-# @app.route('/')
-# def index():
-#     return redirect(url_for('hello'))
-#
-# @app.route('/hello/')
-# def hello(name = None):
-#    return render_template('hello.html')
 
 @app.route('/index')
 @app.route('/')
+def index():
+    return redirect('/upload')
+
+
+@app.route('/remove-jobs')
+def remove_jobs():
+    call(['cancel', '-ax'])
+    flash('Druckaufträge gelöscht')
+    return redirect('/info')
+
+
+@app.route('/info')
+def printer_info():
+    return render_template('printer-info.html', text=check_output(['lpstat', '-t']))
+
+
+@app.route('/delete/<filename>')
+def delete_file(filename):
+    full_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    error = False
+    
+    try:
+        os.remove(full_path)
+    except:
+        error = True
+        
+    if (error):
+        flash('Datei konnte nicht gelöscht werden: '+filename)
+    else:
+        flash('Datei gelöscht: '+filename)
+
+    return redirect(url_for('list_files'))
+
+
+@app.route('/print/<filename>')
+def exec_file(filename):
+    full_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    error = False
+    
+    if (not allowed_file(filename)):
+        flash('Dateityp ist nicht zum Drucken vorgesehen.')
+        return redirect(url_for('list_files'))
+
+    try:
+        call(["lp", full_path])
+    except:
+        error = True
+        
+    if (error):
+        flash('Datei konnte nicht gedruckt werden: '+filename)
+    else:
+        flash('Datei wurde gedruckt: '+filename)
+
+    return redirect(url_for('list_files'))
+
+
+@app.route('/show/<filename>')
+def show_file(filename):
+        return send_from_directory(app.config['UPLOAD_FOLDER'],
+                               filename, as_attachment=False)   
+  
+
+@app.route('/upload')
 def upload_file():
     return render_template('upload.html')
 
 
 @app.route('/uploader', methods=['POST'])
 def uploader():
-    f = request.files['file']
+    try:
+        f = request.files['file']
+    except:
+        flash('Keine Datei ausgewählt')
+        return redirect('/upload')
+        
     f.save(os.path.join(app.config['UPLOAD_FOLDER'], 
            secure_filename(f.filename) ))
-    return render_template('upload-finished.html', 
-            filename=secure_filename(f.filename) )
+    flash('Datei gespeichert: '+secure_filename(f.filename))
+    return redirect(url_for('list_files'))
 
 
 @app.route('/list', methods=['GET'])
@@ -47,43 +117,8 @@ def list_files():
     files = []
     return render_template('list.html', 
         files=os.listdir(app.config['UPLOAD_FOLDER']) )
-
-
-# @app.route('/', methods=['GET', 'POST'])
-# def upload_file():
-#     if request.method == 'POST':
-#         # check if the post request has the file part
-#         if 'file' not in request.files:
-#             flash('No file part')
-#             return redirect(request.url)
-#         file = request.files['file']
-#         # if user does not select file, browser also
-#         # submit an empty part without filename
-#         if file.filename == '':
-#             flash('No selected file')
-#             return redirect(request.url)
-#         if file and allowed_file(file.filename):
-#             filename = secure_filename(file.filename)
-#             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-#             return redirect(url_for('uploaded_file',
-#                                     filename=filename))
-#     return '''
-#     <!doctype html>
-#     <title>Upload new File</title>
-#     <h1>Upload new File</h1>
-#     <form method=post enctype=multipart/form-data>
-#       <input type=file name=file>
-#       <input type=submit value=Upload>
-#     </form>
-#     '''
-
-
-# @app.route('/uploads/<filename>')
-# def uploaded_file(filename):
-#     return send_from_directory(app.config['UPLOAD_FOLDER'],
-#                                filename)
-
+        
 
 if __name__ == '__main__':
-    app.run(debug=True, port=app.config['SERVER_PORT'])
+    app.run(debug=True, port=app.config['SERVER_PORT'], host='0.0.0.0')
 
