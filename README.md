@@ -12,6 +12,7 @@ Hintergrund: Fehlende Druckfunktion von Smartphones und Tablets
     cd http-upload
     mkdir uploads
     
+Den secret key in `app.py` ändern.    
     
 ### .service Datei
 
