@@ -1,4 +1,4 @@
-# http-upload
+# print_via_web
 
 Mini Web-Server zum Hochladen von Dateien, um diese dann
 an den Standarddrucker (via lp/CUPS) zu schicken. 
